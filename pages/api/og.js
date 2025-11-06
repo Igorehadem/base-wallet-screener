@@ -1,7 +1,6 @@
 // pages/api/og.js
-// Dynamic OG image showing live Base wallet stats
+// Dynamic OG image showing live Base wallet stats (edge-safe)
 import { ImageResponse } from "@vercel/og";
-import axios from "axios";
 
 export const config = { runtime: "edge" };
 
@@ -11,14 +10,14 @@ export default async function handler(req) {
     searchParams.get("address") ||
     "0x8ba1f109551bd432803012645ac136ddd64dba72";
 
-  // Fetch stats from our own API
+  // Use native fetch (axios not supported in edge runtime)
   const apiUrl = `${origin}/api/stats?address=${address}`;
-  let stats;
+  let stats = null;
   try {
-    const resp = await axios.get(apiUrl);
-    stats = resp.data;
-  } catch (e) {
-    stats = null;
+    const resp = await fetch(apiUrl, { next: { revalidate: 0 } });
+    if (resp.ok) stats = await resp.json();
+  } catch (err) {
+    console.error("Fetch failed:", err);
   }
 
   const t = stats?.totals || {};
