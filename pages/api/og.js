@@ -1,5 +1,6 @@
 // pages/api/og.js
-// Dynamic OG image showing live Base wallet stats (edge-safe)
+// Fixed edge OG image: adds React import for JSX rendering
+import React from "react";
 import { ImageResponse } from "@vercel/og";
 
 export const config = { runtime: "edge" };
@@ -10,14 +11,14 @@ export default async function handler(req) {
     searchParams.get("address") ||
     "0x8ba1f109551bd432803012645ac136ddd64dba72";
 
-  // Use native fetch (axios not supported in edge runtime)
+  // Fetch stats using native fetch (axios not allowed in edge)
   const apiUrl = `${origin}/api/stats?address=${address}`;
   let stats = null;
   try {
-    const resp = await fetch(apiUrl, { next: { revalidate: 0 } });
+    const resp = await fetch(apiUrl);
     if (resp.ok) stats = await resp.json();
-  } catch (err) {
-    console.error("Fetch failed:", err);
+  } catch (e) {
+    console.error("fetch failed:", e);
   }
 
   const t = stats?.totals || {};
@@ -29,9 +30,10 @@ export default async function handler(req) {
   const addrShort = `${address.slice(0, 6)}...${address.slice(-4)}`;
 
   return new ImageResponse(
-    (
-      <div
-        style={{
+    React.createElement(
+      "div",
+      {
+        style: {
           width: "100%",
           height: "100%",
           display: "flex",
@@ -44,19 +46,24 @@ export default async function handler(req) {
           fontFamily: "monospace",
           textAlign: "center",
           padding: "60px",
-        }}
-      >
-        <h1 style={{ fontSize: 60, marginBottom: 10 }}>🟦 Base Wallet Screener</h1>
-        <p style={{ fontSize: 36, opacity: 0.8, margin: 0 }}>{addrShort}</p>
-        <div style={{ marginTop: 40, fontSize: 28, lineHeight: 1.6 }}>
-          <p>Tx: {normalTxs.toLocaleString()} | Tokens: {tokenTxs.toLocaleString()}</p>
-          <p>Sent: {sent} | Received: {recv}</p>
-          <p>Gas Spent: {gas}</p>
-        </div>
-        <p style={{ marginTop: 60, fontSize: 22, color: "#9ca3af" }}>
-          Live stats from Base — powered by Etherscan v2
-        </p>
-      </div>
+        },
+      },
+      React.createElement("h1", { style: { fontSize: 60, marginBottom: 10 } }, "🟦 Base Wallet Screener"),
+      React.createElement("p", { style: { fontSize: 36, opacity: 0.8, margin: 0 } }, addrShort),
+      React.createElement(
+        "div",
+        { style: { marginTop: 40, fontSize: 28, lineHeight: 1.6 } },
+        `Tx: ${normalTxs.toLocaleString()} | Tokens: ${tokenTxs.toLocaleString()}`,
+        React.createElement("br"),
+        `Sent: ${sent} | Received: ${recv}`,
+        React.createElement("br"),
+        `Gas: ${gas}`
+      ),
+      React.createElement(
+        "p",
+        { style: { marginTop: 60, fontSize: 22, color: "#9ca3af" } },
+        "Live stats from Base — powered by Etherscan v2"
+      )
     ),
     { width: 1024, height: 1024 }
   );
