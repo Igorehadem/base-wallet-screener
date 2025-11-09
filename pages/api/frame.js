@@ -1,8 +1,8 @@
 // pages/api/frame.js
 // Base Wallet Screener – Farcaster Frame (vNext)
 
-import { buildFrameMeta, frameUrl } from "@/lib/meta";
-import { log } from "@/lib/logger";
+import { buildFrameMeta, frameUrl } from "../../lib/meta.js";
+import { log } from "../../lib/logger.js";
 
 export default async function handler(req, res) {
   try {
