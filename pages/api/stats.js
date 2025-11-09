@@ -2,8 +2,8 @@
 // Base Wallet Screener — Etherscan v2 wrapper + analytics
 
 import axios from "axios";
-import { sendJson, log } from "@/lib/logger";
-import { roundTo } from "@/lib/utils";
+import { sendJson, log } from "../../lib/logger.js";
+import { roundTo } from "../../lib/utils.js";
 
 export default async function handler(req, res) {
   const { address } = req.query;
