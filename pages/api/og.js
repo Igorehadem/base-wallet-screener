@@ -2,7 +2,7 @@
 // Dynamic OG image for Base Wallet Screener (uses @vercel/og)
 
 import { ImageResponse } from "@vercel/og";
-import { getBaseUrl, shortAddr } from "@/lib/utils";
+import { getBaseUrl, shortAddr } from "../../lib/utils.js";
 
 export const config = {
   runtime: "edge",
