@@ -10,7 +10,7 @@ const nextConfig = {
   poweredByHeader: false,
   output: "standalone",
   experimental: {
-    optimizeCss: true,
+    optimizeCss: false,
   },
 };
 
