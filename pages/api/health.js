@@ -1,8 +1,8 @@
 // pages/api/health.js
 // Healthcheck endpoint for Base Wallet Screener
 
-import { sendJson, log } from "@/lib/logger";
-import { getBaseUrl } from "@/lib/utils";
+import { sendJson, log } from "../../lib/logger.js";
+import { getBaseUrl } from "../../lib/utils.js";
 
 export default async function handler(req, res) {
   const uptime = process.uptime().toFixed(1);
