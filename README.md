@@ -1,34 +1,31 @@
-# 🧠 Base Wallet Screener (API + Farcaster MiniApp)
+# Base Wallet Screener
 
-Minimal Next.js API that fetches **Base wallet activity** via the **Etherscan API v2**  
-and returns aggregated statistics — designed as a backend for a **Farcaster MiniApp**.
-
-Deployed on **Vercel**, fully serverless (Edge Runtime).
+Serverless Next.js app for screening any **Base wallet** and viewing onchain stats.  
+Works both as a **REST API** and **Farcaster MiniApp Frame**.
 
 ---
 
-## ⚡ Live MiniApp
+## Live Demo
 
-Try it directly in Warpcast or browser:
-
-🔗 **https://base-wallet-screener.vercel.app/api/frame-input**
-
-> Paste any Base address and get live onchain stats as a Farcaster Frame.
+- Web / Warpcast MiniApp:  
+  https://base-wallet-screener.vercel.app/api/frame-input  
+- Example API call:  
+  `/api/stats?address=0x8ba1f109551bd432803012645ac136ddd64dba72`
 
 ---
 
-## 🚀 API Endpoints
+## Endpoints
 
 | Endpoint | Description |
 |-----------|--------------|
-| `/api/stats?address=0x...` | Returns JSON summary of a Base wallet |
-| `/api/og?address=0x...` | Renders dynamic OG image with wallet stats |
-| `/api/frame?address=0x...` | Generates Farcaster Frame metadata |
-| `/api/frame-input` | Interactive entry point (text input + button) |
+| `/api/stats?address=0x...` | JSON summary of Base wallet activity |
+| `/api/og?address=0x...` | Dynamic image preview for a wallet |
+| `/api/frame?address=0x...` | Farcaster frame metadata |
+| `/api/frame-input` | Entry frame with text input field |
 
 ---
 
-## 🧩 Example Response
+## Example JSON
 
 ```json
 {
@@ -37,62 +34,61 @@ Try it directly in Warpcast or browser:
   "totals": {
     "normalTxs": 42,
     "tokenTxs": 13,
-    "sentNative": 0.421,
-    "receivedNative": 1.093,
+    "sentNative": 0.42,
+    "receivedNative": 1.09,
     "gasSpentNative": 0.0035
   },
   "time": {
-    "firstTxIso": "2023-09-11T15:03:24.000Z",
-    "lastTxIso": "2025-10-21T20:55:12.000Z"
+    "firstTxIso": "2023-09-11T15:03:24Z",
+    "lastTxIso": "2025-10-21T20:55:12Z"
   },
-  "counterparties": { "uniqueCount": 17 },
-  "tokens": {
-    "0x...": { "symbol": "USDC", "decimals": 6, "sent": 10.5, "received": 2.0 }
-  }
+  "counterparties": { "uniqueCount": 17 }
 }
 ```
 
 ---
 
-## 🖼️ OG Preview Example
-
-Dynamic image rendered via `/api/og`:
-
-![Base Wallet Screener Preview](https://base-wallet-screener.vercel.app/api/og?address=0x8ba1f109551bd432803012645ac136ddd64dba72)
-
----
-
-## ⚙️ Environment
-
-Copy `.env.example` → `.env` and set your API key:
+## Environment
 
 ```
 BASESCAN_API_KEY=your_etherscan_api_key_here
 ```
 
-Get a free key from 👉 https://etherscan.io/myapikey
+Get an API key at: https://etherscan.io/myapikey  
+Base chainid = 8453.
 
 ---
 
-## 🧭 Roadmap
+## Tech Stack
 
-- [x] Deploy to Vercel  
-- [x] Add `/api/frame` for Farcaster MiniApp  
-- [x] Add `/api/og` dynamic image rendering  
-- [x] Add `/api/frame-input` interactive input-frame  
-- [ ] Add internal tx (`action=txlistinternal`)  
-- [ ] Detect contract interactions (`eth_getCode`)  
-- [ ] Add USD valuation via Coingecko API  
-- [ ] Add leaderboard by wallet activity  
+- Next.js 15 (Edge Runtime)
+- Vercel Serverless Functions
+- Axios + Etherscan v2 API
+- @vercel/og for dynamic OG images
 
 ---
 
-## 🧠 Project Summary
+## Development
 
-**Created by:** [Igorehadem](https://github.com/Igorehadem)  
-**Network:** Base 🟦  
-**Purpose:** Open analytics tool for onchain builders  
-**Built with:** Next.js 15, Edge Runtime, @vercel/og, Etherscan API v2  
-**Deployed:** Vercel Serverless Functions
+```bash
+npm install
+npm run dev
+```
 
 ---
+
+## License
+
+MIT © 2025 Igorehadem  
+https://github.com/Igorehadem/base-wallet-screener
+
+---
+
+## Development Checklist
+
+- [x] Frame endpoints working on Vercel  
+- [x] Etherscan v2 stats implemented  
+- [x] OG image rendering  
+- [ ] Add internal tx support  
+- [ ] Add USD valuation via Coingecko  
+- [ ] Add activity leaderboard
