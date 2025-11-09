@@ -1,45 +1,27 @@
 // pages/api/frame.js
-// Generates Farcaster Frame meta tags dynamically for Base Wallet Screener
-// Comments in English (user preference)
+// Base Wallet Screener – Farcaster Frame (vNext)
 
-export const config = { runtime: "edge" };
+import { buildFrameMeta, frameUrl } from "@/lib/meta";
+import { log } from "@/lib/logger";
 
-export default async function handler(req) {
-  const url = new URL(req.url);
-  const base = `${url.protocol}//${url.host}`;
-  const address = url.searchParams.get("address") || "0x8ba1f109551bd432803012645ac136ddd64dba72"; // default Vitalik’s addr
-  const apiUrl = `${base}/api/stats?address=${address}`;
-  const imageUrl = `${base}/api/og?text=Wallet%20${address.slice(0, 6)}...%20Stats`;
-  const buttonUrl = `${base}/api/frame`; // clicking will reload frame
+export default async function handler(req, res) {
+  try {
+    const base = frameUrl(req);
+    const image = `${base.replace("/api/frame", "")}/api/og?text=Enter%20wallet%20address`;
+    const html = buildFrameMeta({
+      title: "Base Wallet Screener",
+      description: "Analyze Base wallet activity right inside Warpcast.",
+      image,
+      postUrl: `${base.replace("/api/frame", "")}/api/tx`,
+      buttons: ["Summon Stats"],
+      inputText: "Paste Base address",
+    });
 
-  const html = `
-    <html>
-      <head>
-        <meta name="robots" content="noindex,nofollow" />
-        <meta property="og:title" content="Base Wallet Screener" />
-        <meta property="og:description" content="Check onchain activity for any Base address" />
-        <meta property="og:image" content="${imageUrl}" />
-
-        <meta property="fc:frame" content="vNext" />
-        <meta property="fc:frame:image" content="${imageUrl}" />
-        <meta property="fc:frame:post_url" content="${buttonUrl}" />
-        <meta property="fc:frame:button:1" content="Check Another Wallet" />
-        <meta property="fc:frame:button:1:action" content="post" />
-        <meta property="fc:frame:button:1:target" content="${buttonUrl}" />
-      </head>
-      <body>
-        <h1>Base Wallet Screener</h1>
-        <p>Stats for ${address}</p>
-        <p>Data API: ${apiUrl}</p>
-      </body>
-    </html>
-  `;
-
-  return new Response(html, {
-    status: 200,
-    headers: {
-      "Content-Type": "text/html",
-      "Cache-Control": "no-store",
-    },
-  });
+    log.info("✅ Frame meta rendered");
+    res.setHeader("Content-Type", "text/html");
+    res.status(200).send(html);
+  } catch (err) {
+    log.error("❌ Frame build error:", err.message);
+    res.status(500).send("Frame generation failed");
+  }
 }
